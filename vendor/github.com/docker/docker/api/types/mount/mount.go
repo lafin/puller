@@ -50,16 +50,6 @@ const (
 	PropagationSlave Propagation = "slave"
 )
 
-// Propagations is the list of all valid mount propagations
-var Propagations = []Propagation{
-	PropagationRPrivate,
-	PropagationPrivate,
-	PropagationRShared,
-	PropagationShared,
-	PropagationRSlave,
-	PropagationSlave,
-}
-
 // BindOptions defines options specific to mounts of type "bind".
 type BindOptions struct {
 	Propagation Propagation `json:",omitempty"`
@@ -83,7 +73,7 @@ type TmpfsOptions struct {
 	// Size sets the size of the tmpfs, in bytes.
 	//
 	// This will be converted to an operating system specific value
-	// depending on the host. For example, on linux, it will be converted to
+	// depending on the host. For example, on linux, it will be convered to
 	// use a 'k', 'm' or 'g' syntax. BSD, though not widely supported with
 	// docker, uses a straight byte value.
 	//

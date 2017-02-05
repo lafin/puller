@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/client"
+	"io"
+	"os"
 )
 
 func main() {
@@ -23,6 +25,13 @@ func main() {
 	for _, container := range containers {
 		fmt.Println(container.Image, container.Command, container.ID)
 	}
+
+	reader, err := cli.ImagePull(context.Background(), "alpine", types.ImagePullOptions{})
+	if err != nil {
+		panic(err)
+	}
+
+	io.Copy(os.Stdout, reader)
 
 	fmt.Println("done")
 }

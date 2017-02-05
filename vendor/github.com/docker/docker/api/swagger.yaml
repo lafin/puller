@@ -19,10 +19,10 @@ produces:
 consumes:
   - "application/json"
   - "text/plain"
-basePath: "/v1.26"
+basePath: "/v1.25"
 info:
   title: "Docker Engine API"
-  version: "1.26"
+  version: "1.25"
   x-logo:
     url: "https://docs.docker.com/images/logo-docker-main.png"
   description: |
@@ -44,7 +44,7 @@ info:
 
     The API is usually changed in each release of Docker, so API calls are versioned to ensure that clients don't break.
 
-    For Docker Engine 1.14, the API version is 1.26. To lock to this version, you prefix the URL with `/v1.26`. For example, calling `/info` is the same as calling `/v1.26/info`.
+    For Docker Engine 1.13, the API version is 1.25. To lock to this version, you prefix the URL with `/v1.25`. For example, calling `/info` is the same as calling `/v1.25/info`.
 
     Engine releases in the near future should support this version of the API, so your client will continue to work even if it is talking to a newer Engine.
 
@@ -52,11 +52,10 @@ info:
 
     The API uses an open schema model, which means server may add extra properties to responses. Likewise, the server will ignore any extra query parameters and request body properties. When you write clients, you need to ignore additional properties in responses to ensure they do not break when talking to newer Docker daemons.
 
-    This documentation is for version 1.26 of the API, which was introduced with Docker 1.14. Use this table to find documentation for previous versions of the API:
+    This documentation is for version 1.25 of the API, which was introduced with Docker 1.13. Use this table to find documentation for previous versions of the API:
 
     Docker version  | API version | Changes
     ----------------|-------------|---------
-    1.13.x | [1.25](https://docs.docker.com/engine/api/v1.25/) | [API changes](https://docs.docker.com/engine/api/version-history/#v1-25-api-changes)
     1.12.x | [1.24](https://docs.docker.com/engine/api/v1.24/) | [API changes](https://docs.docker.com/engine/api/version-history/#v1-24-api-changes)
     1.11.x | [1.23](https://docs.docker.com/engine/api/v1.23/) | [API changes](https://docs.docker.com/engine/api/version-history/#v1-23-api-changes)
     1.10.x | [1.22](https://docs.docker.com/engine/api/v1.22/) | [API changes](https://docs.docker.com/engine/api/version-history/#v1-22-api-changes)
@@ -91,7 +90,7 @@ info:
 # The tags on paths define the menu sections in the ReDoc documentation, so
 # the usage of tags must make sense for that:
 # - They should be singular, not plural.
-# - There should not be too many tags, or the menu becomes unwieldy. For
+# - There should not be too many tags, or the menu becomes unwieldly. For
 #   example, it is preferable to add a path to the "System" tag instead of
 #   creating a tag with a single path in it.
 # - The order of tags in this list defines the order in the menu.
@@ -742,10 +741,10 @@ definitions:
             items:
               type: "string"
           Interval:
-            description: "The time to wait between checks in nanoseconds. It should be 0 or not less than 1000000000(1s). 0 means inherit."
+            description: "The time to wait between checks in nanoseconds. 0 means inherit."
             type: "integer"
           Timeout:
-            description: "The time to wait before considering the check to have hung. It should be 0 or not less than 1000000000(1s). 0 means inherit."
+            description: "The time to wait before considering the check to have hung. 0 means inherit."
             type: "integer"
           Retries:
             description: "The number of consecutive failures needed to consider a container as unhealthy. 0 means inherit."
@@ -829,40 +828,22 @@ definitions:
         items:
           $ref: "#/definitions/Port"
 
-  GraphDriverData:
-    description: "Information about a container's graph driver."
+  GraphDriver:
+    description: "Information about this container's graph driver."
     type: "object"
-    required: [Name, Data]
     properties:
       Name:
         type: "string"
-        x-nullable: false
       Data:
         type: "object"
-        x-nullable: false
         additionalProperties:
           type: "string"
 
   Image:
     type: "object"
-    required:
-      - Id
-      - Parent
-      - Comment
-      - Created
-      - Container
-      - DockerVersion
-      - Author
-      - Architecture
-      - Os
-      - Size
-      - VirtualSize
-      - GraphDriver
-      - RootFS
     properties:
       Id:
         type: "string"
-        x-nullable: false
       RepoTags:
         type: "array"
         items:
@@ -873,51 +854,37 @@ definitions:
           type: "string"
       Parent:
         type: "string"
-        x-nullable: false
       Comment:
         type: "string"
-        x-nullable: false
       Created:
         type: "string"
-        x-nullable: false
       Container:
         type: "string"
-        x-nullable: false
       ContainerConfig:
         $ref: "#/definitions/Config"
       DockerVersion:
         type: "string"
-        x-nullable: false
       Author:
         type: "string"
-        x-nullable: false
       Config:
         $ref: "#/definitions/Config"
       Architecture:
         type: "string"
-        x-nullable: false
       Os:
-        type: "string"
-        x-nullable: false
-      OsVersion:
         type: "string"
       Size:
         type: "integer"
         format: "int64"
-        x-nullable: false
       VirtualSize:
         type: "integer"
         format: "int64"
-        x-nullable: false
       GraphDriver:
-        $ref: "#/definitions/GraphDriverData"
+        $ref: "#/definitions/GraphDriver"
       RootFS:
         type: "object"
-        required: [Type]
         properties:
           Type:
             type: "string"
-            x-nullable: false
           Layers:
             type: "array"
             items:
@@ -1678,7 +1645,7 @@ definitions:
           NanoCPUs: 4000000000
           MemoryBytes: 8272408576
         Engine:
-          EngineVersion: "1.14.0"
+          EngineVersion: "1.13.0"
           Labels:
             foo: "bar"
           Plugins:
@@ -1883,9 +1850,6 @@ definitions:
               type: "string"
           TTY:
             description: "Whether a pseudo-TTY should be allocated."
-            type: "boolean"
-          ReadOnly:
-            description: "Mount the container's root filesystem as read only."
             type: "boolean"
           Mounts:
             description: "Specification for mounts to be added to containers created as part of the service."
@@ -2337,7 +2301,7 @@ definitions:
           -
             NetworkID: "4qvuz4ko70xaltuqbt8956gd1"
             Addr: "10.255.0.3/16"
-  ImageDeleteResponseItem:
+  ImageDeleteResponse:
     type: "object"
     properties:
       Untagged:
@@ -2934,7 +2898,7 @@ paths:
               HostConfig:
                 $ref: "#/definitions/HostConfig"
               GraphDriver:
-                $ref: "#/definitions/GraphDriverData"
+                $ref: "#/definitions/GraphDriver"
               SizeRw:
                 description: "The size of files that have been created or changed by this container."
                 type: "integer"
@@ -3266,34 +3230,32 @@ paths:
     get:
       summary: "Get changes on a container’s filesystem"
       description: |
-        Returns which files in a container's filesystem have been added, deleted,
-        or modified. The `Kind` of modification can be one of:
+        Returns which files in a container's filesystem have been added, deleted, or modified. The `Kind` of modification can be one of:
 
         - `0`: Modified
         - `1`: Added
         - `2`: Deleted
       operationId: "ContainerChanges"
-      produces: ["application/json"]
+      produces:
+        - "application/json"
       responses:
         200:
-          description: "The list of changes"
+          description: "no error"
           schema:
             type: "array"
             items:
               type: "object"
-              x-go-name: "ContainerChangeResponseItem"
-              required: [Path, Kind]
               properties:
                 Path:
                   description: "Path to file that has changed"
                   type: "string"
-                  x-nullable: false
                 Kind:
                   description: "Kind of change"
                   type: "integer"
-                  format: "uint8"
-                  enum: [0, 1, 2]
-                  x-nullable: false
+                  enum:
+                    - 0
+                    - 1
+                    - 2
           examples:
             application/json:
               - Path: "/dev"
@@ -3352,14 +3314,12 @@ paths:
     get:
       summary: "Get container stats based on resource usage"
       description: |
-        This endpoint returns a live stream of a container’s resource usage
-        statistics.
+        This endpoint returns a live stream of a container’s resource usage statistics.
 
-        The `precpu_stats` is the CPU statistic of last read, which is used
-        for calculating the CPU usage percentage. It is not the same as the
-        `cpu_stats` field.
+        The `precpu_stats` is the CPU statistic of last read, which is used for calculating the CPU usage percentage. It is not the same as the `cpu_stats` field.
       operationId: "ContainerStats"
-      produces: ["application/json"]
+      produces:
+        - "application/json"
       responses:
         200:
           description: "no error"
@@ -3917,7 +3877,7 @@ paths:
           default: false
         - name: "stream"
           in: "query"
-          description: "Stream attached streams from the time the request was made onwards"
+          description: "Stream attached streams from the the time the request was made onwards"
           type: "boolean"
           default: false
         - name: "stdin"
@@ -4049,13 +4009,6 @@ paths:
           examples:
             application/json:
               message: "No such container: c2ada9df5af8"
-        409:
-          description: "conflict"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-          examples:
-            application/json:
-              message: "You cannot remove a running container: c2ada9df5af8. Stop the container before attempting removal or use -f"
         500:
           description: "server error"
           schema:
@@ -4081,7 +4034,7 @@ paths:
     head:
       summary: "Get information about files in a container"
       description: "A response header `X-Docker-Container-Path-Stat` is return containing a base64 - encoded JSON object with some filesystem header information about the path."
-      operationId: "ContainerArchiveInfo"
+      operationId: "ContainerArchiveHead"
       responses:
         200:
           description: "no error"
@@ -4125,9 +4078,10 @@ paths:
       tags: ["Container"]
     get:
       summary: "Get an archive of a filesystem resource in a container"
-      description: "Get a tar archive of a resource in the filesystem of container id."
-      operationId: "ContainerArchive"
-      produces: ["application/x-tar"]
+      description: "Get an tar archive of a resource in the filesystem of container id."
+      operationId: "ContainerGetArchive"
+      produces:
+        - "application/x-tar"
       responses:
         200:
           description: "no error"
@@ -4168,8 +4122,10 @@ paths:
     put:
       summary: "Extract an archive of files or folders to a directory in a container"
       description: "Upload a tar archive to be extracted to a path in the filesystem of container id."
-      operationId: "PutContainerArchive"
-      consumes: ["application/x-tar", "application/octet-stream"]
+      operationId: "ContainerPutArchive"
+      consumes:
+        - "application/x-tar"
+        - "application/octet-stream"
       responses:
         200:
           description: "The content was extracted successfully"
@@ -4227,7 +4183,6 @@ paths:
             Filters to process on the prune list, encoded as JSON (a `map[string][]string`).
 
             Available filters:
-            - `until=<timestamp>` Prune containers created before this timestamp. The `<timestamp>` can be Unix timestamps, date formatted timestamps, or Go duration strings (e.g. `10m`, `1h30m`) computed relative to the daemon machine’s time.
           type: "string"
       responses:
         200:
@@ -4435,8 +4390,8 @@ paths:
           in: "header"
           type: "string"
           enum:
-            - "application/x-tar"
-          default: "application/x-tar"
+            - "application/tar"
+          default: "application/tar"
         - name: "X-Registry-Config"
           in: "header"
           description: |
@@ -4462,10 +4417,6 @@ paths:
       responses:
         200:
           description: "no error"
-        400:
-          description: "Bad parameter"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
         500:
           description: "server error"
           schema:
@@ -4573,7 +4524,6 @@ paths:
               Created: "2015-09-10T08:30:53.26995814Z"
               GraphDriver:
                 Name: "aufs"
-                Data: {}
               RepoDigests:
                 - "localhost:5000/test/busybox/example@sha256:cbbf2f9a99b47fc460d422812b6a5adff7dfee951d8fa2e4a98caa0382cfbdbf"
               RepoTags:
@@ -4632,27 +4582,23 @@ paths:
       summary: "Get the history of an image"
       description: "Return parent layers of an image."
       operationId: "ImageHistory"
-      produces: ["application/json"]
+      produces:
+        - "application/json"
       responses:
         200:
-          description: "List of image layers"
+          description: "No error"
           schema:
             type: "array"
             items:
               type: "object"
-              x-go-name: HistoryResponseItem
-              required: [Id, Created, CreatedBy, Tags, Size, Comment]
               properties:
                 Id:
                   type: "string"
-                  x-nullable: false
                 Created:
                   type: "integer"
                   format: "int64"
-                  x-nullable: false
                 CreatedBy:
                   type: "string"
-                  x-nullable: false
                 Tags:
                   type: "array"
                   items:
@@ -4660,10 +4606,8 @@ paths:
                 Size:
                   type: "integer"
                   format: "int64"
-                  x-nullable: false
                 Comment:
                   type: "string"
-                  x-nullable: false
           examples:
             application/json:
               - Id: "3db9c44f45209632d6050b35958829c3a2aa256d81b9a7be45b362ff85c54710"
@@ -4785,20 +4729,19 @@ paths:
     delete:
       summary: "Remove an image"
       description: |
-        Remove an image, along with any untagged parent images that were
-        referenced by that image.
+        Remove an image, along with any untagged parent images that were referenced by that image.
 
-        Images can't be removed if they have descendant images, are being
-        used by a running container or are being used by a build.
+        Images can't be removed if they have descendant images, are being used by a running container or are being used by a build.
       operationId: "ImageDelete"
-      produces: ["application/json"]
+      produces:
+        - "application/json"
       responses:
         200:
-          description: "The image was deleted successfully"
+          description: "No error"
           schema:
             type: "array"
             items:
-              $ref: "#/definitions/ImageDeleteResponseItem"
+              $ref: "#/definitions/ImageDeleteResponse"
           examples:
             application/json:
               - Untagged: "3e2f21a89f"
@@ -4915,7 +4858,6 @@ paths:
             - `dangling=<boolean>` When set to `true` (or `1`), prune only
                unused *and* untagged images. When set to `false`
                (or `0`), all unused images are pruned.
-            - `until=<string>` Prune images created before this timestamp. The `<timestamp>` can be Unix timestamps, date formatted timestamps, or Go duration strings (e.g. `10m`, `1h30m`) computed relative to the daemon machine’s time.
           type: "string"
       responses:
         200:
@@ -4927,7 +4869,7 @@ paths:
                 description: "Images that were deleted"
                 type: "array"
                 items:
-                  $ref: "#/definitions/ImageDeleteResponseItem"
+                  $ref: "#/definitions/ImageDeleteResponse"
               SpaceReclaimed:
                 description: "Disk space reclaimed in bytes"
                 type: "integer"
@@ -5193,7 +5135,8 @@ paths:
       summary: "Get version"
       description: "Returns the version of Docker that is running and various information about the system that Docker is running on."
       operationId: "SystemVersion"
-      produces: ["application/json"]
+      produces:
+        - "application/json"
       responses:
         200:
           description: "no error"
@@ -5222,13 +5165,13 @@ paths:
                 type: "string"
           examples:
             application/json:
-              Version: "1.14.0"
+              Version: "1.13.0"
               Os: "linux"
               KernelVersion: "3.19.0-23-generic"
               GoVersion: "go1.6.3"
               GitCommit: "deadbee"
               Arch: "amd64"
-              ApiVersion: "1.26"
+              ApiVersion: "1.25"
               MinAPIVersion: "1.12"
               BuildTime: "2016-06-14T07:09:13.444803460+00:00"
               Experimental: true
@@ -5242,20 +5185,14 @@ paths:
       summary: "Ping"
       description: "This is a dummy endpoint you can use to test if the server is accessible."
       operationId: "SystemPing"
-      produces: ["text/plain"]
+      produces:
+        - "text/plain"
       responses:
         200:
           description: "no error"
           schema:
             type: "string"
             example: "OK"
-          headers:
-            API-Version:
-              type: "string"
-              description: "Max API Version the server supports"
-            Docker-Experimental:
-              type: "boolean"
-              description: "If the server is running with experimental mode enabled"
         500:
           description: "server error"
           schema:
@@ -6350,6 +6287,8 @@ paths:
   /networks/prune:
     post:
       summary: "Delete unused networks"
+      consumes:
+        - "application/json"
       produces:
         - "application/json"
       operationId: "NetworkPrune"
@@ -6360,7 +6299,6 @@ paths:
             Filters to process on the prune list, encoded as JSON (a `map[string][]string`).
 
             Available filters:
-            - `until=<timestamp>` Prune networks created before this timestamp. The `<timestamp>` can be Unix timestamps, date formatted timestamps, or Go duration strings (e.g. `10m`, `1h30m`) computed relative to the daemon machine’s time.
           type: "string"
       responses:
         200:
@@ -6368,7 +6306,7 @@ paths:
           schema:
             type: "object"
             properties:
-              NetworksDeleted:
+              VolumesDeleted:
                 description: "Networks that were deleted"
                 type: "array"
                 items:
@@ -6736,20 +6674,8 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/Node"
-        400:
-          description: "bad parameter"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-        404:
-          description: "no such node"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
         500:
           description: "server error"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-        503:
-          description: "node is not part of a swarm"
           schema:
             $ref: "#/definitions/ErrorResponse"
       parameters:
@@ -6783,10 +6709,6 @@ paths:
           description: "server error"
           schema:
             $ref: "#/definitions/ErrorResponse"
-        503:
-          description: "node is not part of a swarm"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -6806,10 +6728,6 @@ paths:
             $ref: "#/definitions/ErrorResponse"
         500:
           description: "server error"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-        503:
-          description: "node is not part of a swarm"
           schema:
             $ref: "#/definitions/ErrorResponse"
       parameters:
@@ -6837,10 +6755,6 @@ paths:
             $ref: "#/definitions/ErrorResponse"
         500:
           description: "server error"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-        503:
-          description: "node is not part of a swarm"
           schema:
             $ref: "#/definitions/ErrorResponse"
       parameters:
@@ -6907,16 +6821,8 @@ paths:
               UpdatedAt: "2016-08-15T16:32:09.623207604Z"
               Version:
                 Index: 51
-        404:
-          description: "no such swarm"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
         500:
           description: "server error"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-        503:
-          description: "node is not part of a swarm"
           schema:
             $ref: "#/definitions/ErrorResponse"
       tags: ["Swarm"]
@@ -6938,12 +6844,12 @@ paths:
           description: "bad parameter"
           schema:
             $ref: "#/definitions/ErrorResponse"
-        500:
-          description: "server error"
+        406:
+          description: "node is already part of a swarm"
           schema:
             $ref: "#/definitions/ErrorResponse"
-        503:
-          description: "node is already part of a swarm"
+        500:
+          description: "server error"
           schema:
             $ref: "#/definitions/ErrorResponse"
       parameters:
@@ -7111,10 +7017,6 @@ paths:
           description: "server error"
           schema:
             $ref: "#/definitions/ErrorResponse"
-        503:
-          description: "node is not part of a swarm"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
       tags: ["Swarm"]
   /swarm/unlock:
     post:
@@ -7143,10 +7045,6 @@ paths:
           description: "server error"
           schema:
             $ref: "#/definitions/ErrorResponse"
-        503:
-          description: "node is not part of a swarm"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
       tags: ["Swarm"]
   /services:
     get:
@@ -7161,10 +7059,6 @@ paths:
               $ref: "#/definitions/Service"
         500:
           description: "server error"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-        503:
-          description: "node is not part of a swarm"
           schema:
             $ref: "#/definitions/ErrorResponse"
       parameters:
@@ -7201,10 +7095,6 @@ paths:
             example:
               ID: "ak7w3gjqoa3kuz8xcpnyy0pvl"
               Warning: "unable to pin image doesnotexist:latest to digest: image library/doesnotexist:latest not found"
-        400:
-          description: "bad parameter"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
         403:
           description: "network is not eligible for services"
           schema:
@@ -7218,7 +7108,7 @@ paths:
           schema:
             $ref: "#/definitions/ErrorResponse"
         503:
-          description: "node is not part of a swarm"
+          description: "server error or node is not part of a swarm"
           schema:
             $ref: "#/definitions/ErrorResponse"
       parameters:
@@ -7300,10 +7190,6 @@ paths:
           description: "server error"
           schema:
             $ref: "#/definitions/ErrorResponse"
-        503:
-          description: "node is not part of a swarm"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -7325,10 +7211,6 @@ paths:
           description: "server error"
           schema:
             $ref: "#/definitions/ErrorResponse"
-        503:
-          description: "node is not part of a swarm"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -7346,21 +7228,13 @@ paths:
         200:
           description: "no error"
           schema:
-            $ref: "#/definitions/ServiceUpdateResponse"
-        400:
-          description: "bad parameter"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
+            $ref: "#/definitions/ImageDeleteResponse"
         404:
           description: "no such service"
           schema:
             $ref: "#/definitions/ErrorResponse"
         500:
           description: "server error"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-        503:
-          description: "node is not part of a swarm"
           schema:
             $ref: "#/definitions/ErrorResponse"
       parameters:
@@ -7449,10 +7323,6 @@ paths:
               message: "No such container: c2ada9df5af8"
         500:
           description: "server error"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-        503:
-          description: "node is not part of a swarm"
           schema:
             $ref: "#/definitions/ErrorResponse"
       parameters:
@@ -7624,12 +7494,9 @@ paths:
                             Gateway: "10.255.0.1"
                     Addresses:
                       - "10.255.0.5/16"
+
         500:
           description: "server error"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-        503:
-          description: "node is not part of a swarm"
           schema:
             $ref: "#/definitions/ErrorResponse"
       parameters:
@@ -7665,10 +7532,6 @@ paths:
           description: "server error"
           schema:
             $ref: "#/definitions/ErrorResponse"
-        503:
-          description: "node is not part of a swarm"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
@@ -7701,10 +7564,6 @@ paths:
           description: "server error"
           schema:
             $ref: "#/definitions/ErrorResponse"
-        503:
-          description: "node is not part of a swarm"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "filters"
           in: "query"
@@ -7733,16 +7592,16 @@ paths:
                 type: "string"
             example:
               ID: "ktnbjxoalbkvbvedmg1urrz8h"
+        406:
+          description: "server error or node is not part of a swarm"
+          schema:
+            $ref: "#/definitions/ErrorResponse"
         409:
           description: "name conflicts with an existing object"
           schema:
             $ref: "#/definitions/ErrorResponse"
         500:
           description: "server error"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-        503:
-          description: "node is not part of a swarm"
           schema:
             $ref: "#/definitions/ErrorResponse"
       parameters:
@@ -7781,12 +7640,12 @@ paths:
           description: "secret not found"
           schema:
             $ref: "#/definitions/ErrorResponse"
-        500:
-          description: "server error"
+        406:
+          description: "node is not part of a swarm"
           schema:
             $ref: "#/definitions/ErrorResponse"
-        503:
-          description: "node is not part of a swarm"
+        500:
+          description: "server error"
           schema:
             $ref: "#/definitions/ErrorResponse"
       parameters:
@@ -7812,47 +7671,10 @@ paths:
           description: "server error"
           schema:
             $ref: "#/definitions/ErrorResponse"
-        503:
-          description: "node is not part of a swarm"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
       parameters:
         - name: "id"
           in: "path"
           required: true
           type: "string"
           description: "ID of the secret"
-      tags: ["Secret"]
-  /secrets/{id}/update:
-    post:
-      summary: "Update a Secret"
-      operationId: "SecretUpdate"
-      responses:
-        200:
-          description: "no error"
-        404:
-          description: "no such secret"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-        500:
-          description: "server error"
-          schema:
-            $ref: "#/definitions/ErrorResponse"
-      parameters:
-        - name: "id"
-          in: "path"
-          description: "The ID of the secret"
-          type: "string"
-          required: true
-        - name: "body"
-          in: "body"
-          schema:
-            $ref: "#/definitions/SecretSpec"
-          description: "The spec of the secret to update. Currently, only the Labels field can be updated. All other fields must remain unchanged from the [SecretInspect endpoint](#operation/SecretInspect) response values."
-        - name: "version"
-          in: "query"
-          description: "The version number of the secret object being updated. This is required to avoid conflicting writes."
-          type: "integer"
-          format: "int64"
-          required: true
       tags: ["Secret"]
