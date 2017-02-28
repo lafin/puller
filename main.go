@@ -4,22 +4,16 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"io/ioutil"
+	"strings"
+	"time"
+
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"
-	"io/ioutil"
-	"strings"
 )
 
-func main() {
-	policyUpdating := flag.String("policy", "all", "policy of updateting container (all, running)")
-	// autoUpdating := flag.Bool("auto", false, "auto update by schedule (checking every 10 min)")
-	// webUI := flag.Bool("web", false, "run web ui")
-	// hookUpdating := flag.Bool("hook", false, "update by hook")
-	// notify := flag.Bool("notify", false, "notify about fail")
-	// rollback := flag.Bool("rollback", false, "rollback after fail (only for containers which was runned)")
-	// internalNetwork := flag.Bool("network", false, "puller's network")
-
+func worker(config *WorkerConfig) {
 	cli, err := client.NewEnvClient()
 	if err != nil {
 		panic(err)
@@ -34,9 +28,6 @@ func main() {
 
 	for _, container := range containers {
 		wasRunned := container.State == "running"
-		if *policyUpdating == "running" && !wasRunned {
-			continue
-		}
 
 		reader, err := cli.ImagePull(context.Background(), container.Image, types.ImagePullOptions{})
 		if err != nil {
@@ -80,4 +71,34 @@ func main() {
 	}
 
 	fmt.Println("done")
+}
+
+type WorkerConfig struct {
+	Policy   string
+	Notify   bool
+	Rollback bool
+	Intranet bool
+}
+
+func main() {
+	policy := flag.String("policy", "auto", "policy updating containers (auto, hook, web)")
+	notify := flag.Bool("notify", false, "notify about fail")
+	rollback := flag.Bool("rollback", false, "rollback after fail (only for containers which was runned)")
+	intranet := flag.Bool("intranet", false, "puller's network")
+
+	config := WorkerConfig{*policy, *notify, *rollback, *intranet}
+
+	if config.Policy == "auto" {
+		ticker := time.NewTicker(600 * time.Second)
+		quit := make(chan struct{})
+		for {
+			select {
+			case <-ticker.C:
+				worker(&config)
+			case <-quit:
+				ticker.Stop()
+				return
+			}
+		}
+	}
 }
